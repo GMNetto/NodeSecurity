@@ -59,11 +59,39 @@ var exports = function(app, db) {
      ** directly accessing the route?             **
      ***********************************************/
     // Benefits Page
-    app.get("/benefits", isLoggedIn, benefitsHandler.displayBenefits);
-    app.post("/benefits", isLoggedIn, benefitsHandler.updateBenefits);
+    var usersCol = db.collection("users");
+    app.get("/benefits", isLoggedIn, function (req, res, next) {
+        var userId = req.session.userId;
+        usersCol.findOne({
+            _id: parseInt(userId)
+        }, function (err, user) {
+            console.log(user);
+            if(user.isAdmin){
+                benefitsHandler.displayBenefits(req, res, next);
+            }
+        });
+    });
+
+    app.post("/benefits", isLoggedIn, function(req, res, next) {
+        var userId = req.session.userId;
+        usersCol.findOne({
+            _id: parseInt(userId)
+        }, function (err, user) {
+            console.log(user);
+            if (user.isAdmin) {
+                benefitsHandler.updateBenefits(req, res, next);
+            }
+        });
+    });
 
     // Allocations Page
-    app.get("/allocations/:userId", isLoggedIn, allocationsHandler.displayAllocations);
+    app.get("/allocations/:userId", isLoggedIn, function (req, res, next) {
+        var userId = parseInt(req.params.userId);
+        var userIdSession = parseInt(req.session.userId);
+        if(userId === userIdSession) {
+            allocationsHandler.displayAllocations(req, res, next);
+        }
+    });
 
     // Handle redirect for learning resources link
     app.get("/learn", isLoggedIn, function(req, res, next) {
