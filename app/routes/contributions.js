@@ -22,9 +22,9 @@ function ContributionsHandler(db) {
          ** What is bad about using eval() to parse   **
          ** user input here?                          **
          ***********************************************/
-        var preTax = eval(req.body.preTax);
-        var afterTax = eval(req.body.afterTax);
-        var roth = eval(req.body.roth);
+        var preTax = parseFloat(req.body.preTax);
+        var afterTax = parseFloat(req.body.afterTax);
+        var roth = parseFloat(req.body.roth);
 
         var userId = req.session.userId;
 
