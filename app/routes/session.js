@@ -1,5 +1,6 @@
 var UserDAO = require("../data/user-dao").UserDAO;
 var AllocationsDAO = require("../data/allocations-dao").AllocationsDAO;
+var xssFilters = require('xss-filters');//validates input
 
 /* The SessionHandler must be constructed with a connected db */
 function SessionHandler(db) {
@@ -154,12 +155,12 @@ function SessionHandler(db) {
 
     this.handleSignup = function(req, res, next) {
 
-        var email = req.body.email;
-        var userName = req.body.userName;
-        var firstName = req.body.firstName;
-        var lastName = req.body.lastName;
-        var password = req.body.password;
-        var verify = req.body.verify;
+        var email = xssFilters.inHTMLData(req.body.email);
+        var userName = xssFilters.inHTMLData(req.body.userName);
+        var firstName = xssFilters.inHTMLData(req.body.firstName);
+        var lastName = xssFilters.inHTMLData(req.body.lastName);
+        var password = xssFilters.inHTMLData(req.body.password);
+        var verify = xssFilters.inHTMLData(req.body.verify);
 
         // set these up in case we have an error case
         var errors = {

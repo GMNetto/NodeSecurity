@@ -1,4 +1,5 @@
 var ProfileDAO = require("../data/profile-dao").ProfileDAO;
+var xssFilters = require('xss-filters');//validates input
 
 /* The ProfileHandler must be constructed with a connected db */
 function ProfileHandler(db) {
@@ -19,13 +20,13 @@ function ProfileHandler(db) {
 
     this.handleProfileUpdate = function(req, res, next) {
 
-        var firstName = html(req.body.firstName);
-        var lastName = req.body.lastName;
-        var ssn = req.body.ssn;
-        var dob = req.body.dob;
-        var address = req.body.address;
-        var bankAcc = req.body.bankAcc;
-        var bankRouting = req.body.bankRouting;
+        var firstName = xssFilters.inHTMLData(req.body.firstName);
+        var lastName = xssFilters.inHTMLData(req.body.lastName);
+        var ssn = xssFilters.inHTMLData(req.body.ssn);
+        var dob = xssFilters.inHTMLData(req.body.dob);
+        var address = xssFilters.inHTMLData(req.body.address);
+        var bankAcc = xssFilters.inHTMLData(req.body.bankAcc);
+        var bankRouting = xssFilters.inHTMLData(req.body.bankRouting);
 
         var userId = req.session.userId;
 

@@ -11,6 +11,7 @@ var http = require("http");
 var app = express(); // Web framework to handle routing requests
 var routes = require("./app/routes");
 var config = require("./config/config"); // Application config properties
+var xssFilters = require('xss-filters');//validates input
 
 
 /*************** SECURITY ISSUES ***************
