@@ -13,6 +13,7 @@ function ContributionsHandler(db) {
             if (error) return next(error);
 
             contrib.userId = userId; //set for nav menu items
+            contrib.csrftoken = req.csrfToken();
             return res.render("contributions", contrib);
         });
     };

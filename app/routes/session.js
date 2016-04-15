@@ -33,14 +33,14 @@ function SessionHandler(db) {
         return res.render("login", {
             userName: "",
             password: "",
-            loginError: ""
+            loginError: "",
+            csrftoken: req.csrfToken()
         });
     };
 
     this.handleLoginRequest = function(req, res, next) {
         var userName = req.body.userName;
         var password = req.body.password;
-
         userDAO.validateLogin(userName, password, function(err, user) {
             var errorMessage = "Invalid username and/or password";
             var invalidUserNameErrorMessage = "Invalid username";
@@ -95,7 +95,8 @@ function SessionHandler(db) {
             email: "",
             userNameError: "",
             emailError: "",
-            verifyError: ""
+            verifyError: "",
+            csrftoken: req.csrfToken()
         });
     };
 

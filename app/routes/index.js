@@ -4,6 +4,7 @@ var BenefitsHandler = require("./benefits");
 var ContributionsHandler = require("./contributions");
 var AllocationsHandler = require("./allocations");
 var ErrorHandler = require("./error").errorHandler;
+var csrf = require('csurf');//create token
 
 // This page handles ROUTES. It checks whether a user is logged in, whether
 // they're an admin, and sends a user to whichever route they requested.
@@ -21,16 +22,27 @@ var exports = function(app, db) {
     // Middleware to check if a user is logged in
     var isLoggedIn = sessionHandler.isLoggedInMiddleware;
 
+    var csrfProtection = csrf({ cookie: false });
+
+    // error handler
+    app.use(function (err, req, res, next) {
+        if (err.code !== 'EBADCSRFTOKEN') return next(err)
+
+        // handle CSRF token errors here
+        res.status(403)
+        res.send('csrf????')
+    });
+
     // The main page of the app
     app.get("/", sessionHandler.displayWelcomePage);
 
     // Login form
-    app.get("/login", sessionHandler.displayLoginPage);
-    app.post("/login", sessionHandler.handleLoginRequest);
+    app.get("/login", csrfProtection, sessionHandler.displayLoginPage);
+    app.post("/login", csrfProtection, sessionHandler.handleLoginRequest);
 
     // Signup form
-    app.get("/signup", sessionHandler.displaySignupPage);
-    app.post("/signup", sessionHandler.handleSignup);
+    app.get("/signup", csrfProtection, sessionHandler.displaySignupPage);
+    app.post("/signup", csrfProtection, sessionHandler.handleSignup);
 
     // Logout page
     app.get("/logout", sessionHandler.displayLogoutPage);
@@ -44,12 +56,12 @@ var exports = function(app, db) {
     app.get("/dashboard", isLoggedIn, sessionHandler.displayWelcomePage);
 
     // Profile page
-    app.get("/profile", isLoggedIn, profileHandler.displayProfile);
-    app.post("/profile", isLoggedIn, profileHandler.handleProfileUpdate);
+    app.get("/profile", isLoggedIn, csrfProtection, profileHandler.displayProfile);
+    app.post("/profile", isLoggedIn, csrfProtection, profileHandler.handleProfileUpdate);
 
     // Contributions Page
-    app.get("/contributions", isLoggedIn, contributionsHandler.displayContributions);
-    app.post("/contributions", isLoggedIn, contributionsHandler.handleContributionsUpdate);
+    app.get("/contributions", isLoggedIn, csrfProtection, contributionsHandler.displayContributions);
+    app.post("/contributions", isLoggedIn, csrfProtection, contributionsHandler.handleContributionsUpdate);
 
 
     /*************** SECURITY ISSUE ****************

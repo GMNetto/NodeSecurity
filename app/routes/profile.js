@@ -1,6 +1,7 @@
 var ProfileDAO = require("../data/profile-dao").ProfileDAO;
 var xssFilters = require('xss-filters');//validates input
 
+
 /* The ProfileHandler must be constructed with a connected db */
 function ProfileHandler(db) {
     "use strict";
@@ -13,7 +14,7 @@ function ProfileHandler(db) {
         profile.getByUserId(parseInt(userId), function(err, doc) {
             if (err) return next(err);
             doc.userId = userId;
-
+            doc.csrftoken = req.csrfToken();
             return res.render("profile", doc);
         });
     };
@@ -47,7 +48,6 @@ function ProfileHandler(db) {
                 //firstName = firstName.trim();
                 user.updateSuccess = true;
                 user.userId = userId;
-
                 return res.render("profile", user);
             }
         );
