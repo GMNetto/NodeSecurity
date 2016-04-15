@@ -19,7 +19,7 @@ function ProfileHandler(db) {
 
     this.handleProfileUpdate = function(req, res, next) {
 
-        var firstName = req.body.firstName;
+        var firstName = html(req.body.firstName);
         var lastName = req.body.lastName;
         var ssn = req.body.ssn;
         var dob = req.body.dob;
